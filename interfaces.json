@@ -1,0 +1,17 @@
+{
+    "openconfig-interfaces:interface": [
+        {
+            "name": "Ethernet1",
+            "config": {
+                "description": "IXP Port"
+            },
+            "subinterfaces": {
+                "subinterface": [
+                    {
+                        "index": "0"
+                    }
+                ]
+            }
+        }
+    ]
+}

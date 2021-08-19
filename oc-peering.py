@@ -59,8 +59,16 @@ with open("bgp.json", "w") as f:
 
 # interfaces
 
+oc = openconfig_interfaces()
+oc.interfaces.interface.add('Ethernet1')
+oc.interfaces.interface['Ethernet1'].config.description = 'IXP Port'
+oc.interfaces.interface['Ethernet1'].config.enabled = True
+ip = "193.178.185.250"
+prefix_length= "24"
+oc.interfaces.interface['Ethernet1'].subinterfaces.subinterface.add(0)
+#oc.interfaces.interface['Ethernet1'].subinterfaces.subinterface[0].ipv4.addresses.add(ip=ip,prefix_length=prefix_length)
+oc.interfaces.interface['Ethernet1'].subinterfaces.subinterface[0].ipv4.addresses.config.ip=ip
 
-# with open("interfaces.json", "w") as f:
-#     f.write(pybindJSON.dumps(oc.bgp, mode="ietf"))
-
+with open("interfaces.json", "w") as f:
+    f.write(pybindJSON.dumps(oc.interfaces, mode="ietf"))
 
