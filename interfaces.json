@@ -8,7 +8,20 @@
             "subinterfaces": {
                 "subinterface": [
                     {
-                        "index": "0"
+                        "index": "0",
+                        "openconfig-if-ip:ipv4": {
+                            "addresses": {
+                                "address": [
+                                    {
+                                        "ip": "193.178.185.250",
+                                        "config": {
+                                            "ip": "193.178.185.250",
+                                            "prefix-length": 24
+                                        }
+                                    }
+                                ]
+                            }
+                        }
                     }
                 ]
             }
