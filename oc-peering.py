@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-from openconfig_bgp import openconfig_bgp
+from openconfig_network_instance import openconfig_network_instance
 from openconfig_routing_policy import openconfig_routing_policy
 from openconfig_interfaces import openconfig_interfaces
 import pyangbind.lib.pybindJSON as pybindJSON
@@ -69,43 +69,65 @@ with open("json/interfaces.json", "w") as f:
 ## Generate OpenConfig prefix-lists
 #####################
 oc = openconfig_routing_policy()
-pfxname = 'AS' + str(asn) + '-v4'
-oc.routing_policy.defined_sets.prefix_sets.prefix_set.add(pfxname)
-oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].config.name = pfxname
+pfxname4 = 'PFX_AS' + str(asn) + '-v4'
+oc.routing_policy.defined_sets.prefix_sets.prefix_set.add(pfxname4)
+oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname4].config.name = pfxname4
 for pfxlist in bgpq4['temp']:
     print(f"prefix: {pfxlist['prefix']}")
-    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix.add(ip_prefix=pfxlist['prefix'], masklength_range='exact')
-    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.ip_prefix = pfxlist['prefix']
-    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.masklength_range = 'exact'
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname4].prefixes.prefix.add(ip_prefix=pfxlist['prefix'], masklength_range='exact')
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname4].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.ip_prefix = pfxlist['prefix']
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname4].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.masklength_range = 'exact'
 
-pfxname = 'AS' + str(asn) + '-v6'
-oc.routing_policy.defined_sets.prefix_sets.prefix_set.add(pfxname)
-oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].config.name = pfxname
+pfxname6 = 'PFX_AS' + str(asn) + '-v6'
+oc.routing_policy.defined_sets.prefix_sets.prefix_set.add(pfxname6)
+oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname6].config.name = pfxname6
 for pfxlist in bgpq6['temp']:
     print(f"prefix: {pfxlist['prefix']}")
-    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix.add(ip_prefix=pfxlist['prefix'], masklength_range='exact')
-    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.ip_prefix = pfxlist['prefix']
-    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.masklength_range = 'exact'
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname6].prefixes.prefix.add(ip_prefix=pfxlist['prefix'], masklength_range='exact')
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname6].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.ip_prefix = pfxlist['prefix']
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname6].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.masklength_range = 'exact'
 
-with open("json/prefixlists.json", "w") as f:
+#####################
+## Generate OpenConfig route-maps
+#####################
+rmname = 'RM_AS' + str(asn) + '-in'
+oc.routing_policy.policy_definitions.policy_definition.add(rmname)
+oc.routing_policy.policy_definitions.policy_definition[rmname].config.name = rmname
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement.add(10)
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[10].config.name = 10
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[10].conditions.match_prefix_set.config.prefix_set = pfxname4
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[10].actions.config.policy_result = 'ACCEPT_ROUTE'
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement.add(20)
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[20].config.name = 20
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[20].conditions.match_prefix_set.config.prefix_set = pfxname6
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[20].actions.config.policy_result = 'ACCEPT_ROUTE'
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement.add(65535)
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[65535].config.name = 65535
+oc.routing_policy.policy_definitions.policy_definition[rmname].statements.statement[65535].actions.config.policy_result = 'REJECT_ROUTE'
+
+with open("json/routing_policy.json", "w") as f:
     f.write(pybindJSON.dumps(oc.routing_policy, mode="ietf"))
 
 #####################
 ## Generate OpenConfig BGP neighbor config
 #####################
-oc = openconfig_bgp()
+oc = openconfig_network_instance()
+oc.network_instances.network_instance.add('default')
+oc.network_instances.network_instance['default'].protocols.protocol.add(identifier='BGP', name='BGP')
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor.add(ipaddr4)
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].config.neighbor_address=ipaddr4
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].config.enabled=True
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].config.peer_as=asn
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].config.description=name
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].apply_policy.config.import_policy=rmname
 
-oc.bgp.neighbors.neighbor.add(ipaddr4)
-oc.bgp.neighbors.neighbor[ipaddr4].config.neighbor_address=ipaddr4
-oc.bgp.neighbors.neighbor[ipaddr4].config.enabled=True
-oc.bgp.neighbors.neighbor[ipaddr4].config.peer_as=asn
-oc.bgp.neighbors.neighbor[ipaddr4].config.description=name
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor.add(ipaddr6)
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].config.neighbor_address=ipaddr6
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].config.enabled=True
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].config.peer_as=asn
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].config.description=name
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].apply_policy.config.import_policy=rmname
 
-oc.bgp.neighbors.neighbor.add(ipaddr6)
-oc.bgp.neighbors.neighbor[ipaddr6].config.neighbor_address=ipaddr6
-oc.bgp.neighbors.neighbor[ipaddr6].config.enabled=True
-oc.bgp.neighbors.neighbor[ipaddr6].config.peer_as=asn
-oc.bgp.neighbors.neighbor[ipaddr6].config.description=name
 with open("json/bgp.json", "w") as f:
-    f.write(pybindJSON.dumps(oc.bgp, mode="ietf"))
+    f.write(pybindJSON.dumps(oc.network_instances, mode="ietf"))
 

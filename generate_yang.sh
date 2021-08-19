@@ -11,7 +11,7 @@ source venv/bin/activate
 MODULESPATH="`pwd`/venv/lib/python3/site-packages/"
 PLUGINPATH="`pwd`/venv/lib/python3/site-packages/pyangbind/plugin/"
 cd yang/consolidated
-pyang --plugindir ${PLUGINPATH} -f pybind -o ${MODULESPATH}/openconfig_bgp.py openconfig-bgp.yang
+pyang --plugindir ${PLUGINPATH} -f pybind -o ${MODULESPATH}/openconfig_network_instance.py openconfig-network-instance.yang openconfig-bgp.yang
 pyang --plugindir ${PLUGINPATH} -f pybind -o ${MODULESPATH}/openconfig_interfaces.py openconfig-interfaces.yang openconfig-if-ip.yang arista-intf-augments.yang
-pyang --plugindir ${PLUGINPATH} -f pybind -o ${MODULESPATH}/openconfig_routing_policy.py openconfig-routing-policy.yang
+pyang --plugindir ${PLUGINPATH} -f pybind -o ${MODULESPATH}/openconfig_routing_policy.py openconfig-routing-policy.yang arista-rpol-augments.yang
 cd ../../
