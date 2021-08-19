@@ -1,6 +1,6 @@
+import os
 import requests
 import json
-from pprint import pprint as pp
 from openconfig_bgp import openconfig_bgp
 from openconfig_routing_policy import openconfig_routing_policy
 from openconfig_interfaces import openconfig_interfaces
@@ -29,8 +29,9 @@ print(f"ASN: {asn} \nIPv4: {ipaddr4} \nIPv6: {ipaddr6}")
 #####################
 ## Prefix list from IRR
 #####################
-fullCmd4 = "~/project/persist/bgpq4/bgpq4 -4 -A -j -l temp {}".format(irr_as_set)
-fullCmd6 = "~/project/persist/bgpq4/bgpq4 -6 -A -j -l temp {}".format(irr_as_set)
+cwd = os.getcwd()
+fullCmd4 = cwd + "/bgpq4/bgpq4 -4 -A -j -l temp {}".format(irr_as_set)
+fullCmd6 = cwd + "/bgpq4/bgpq4 -6 -A -j -l temp {}".format(irr_as_set)
 output4 = subprocess.check_output(fullCmd4, shell=True)
 bgpq4 = json.loads(output4)
 output6 = subprocess.check_output(fullCmd6, shell=True)
@@ -61,7 +62,7 @@ oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv6.config.ena
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv6.addresses.address[ipv6].config.ip = ipv6
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv6.addresses.address[ipv6].config.prefix_length = ipv6_prefix_length
 
-with open("interfaces.json", "w") as f:
+with open("json/interfaces.json", "w") as f:
     f.write(pybindJSON.dumps(oc.interfaces, mode="ietf"))
 
 #####################
@@ -85,7 +86,7 @@ oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].config.name = pfx
 for pfxlist in bgpq6['temp']:
     oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix.add(ip_prefix=pfxlist['prefix'], masklength_range='exact')
 
-with open("prefixlists.json", "w") as f:
+with open("json/prefixlists.json", "w") as f:
     f.write(pybindJSON.dumps(oc.routing_policy, mode="ietf"))
 
 #####################
@@ -104,6 +105,6 @@ oc.bgp.neighbors.neighbor[ipaddr6].config.neighbor_address=ipaddr6
 oc.bgp.neighbors.neighbor[ipaddr6].config.enabled=True
 oc.bgp.neighbors.neighbor[ipaddr6].config.peer_as=asn
 oc.bgp.neighbors.neighbor[ipaddr6].config.description=name
-with open("bgp.json", "w") as f:
+with open("json/bgp.json", "w") as f:
     f.write(pybindJSON.dumps(oc.bgp, mode="ietf"))
 
