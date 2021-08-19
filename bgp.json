@@ -1,0 +1,22 @@
+{
+    "openconfig-bgp:neighbors": {
+        "neighbor": [
+            {
+                "neighbor-address": "193.178.185.82",
+                "config": {
+                    "neighbor-address": "193.178.185.82",
+                    "peer-as": 44194,
+                    "description": "freifunk.net"
+                }
+            },
+            {
+                "neighbor-address": "2001:7f8:19:1::aca2:2",
+                "config": {
+                    "neighbor-address": "2001:7f8:19:1::aca2:2",
+                    "peer-as": 44194,
+                    "description": "freifunk.net"
+                }
+            }
+        ]
+    }
+}
