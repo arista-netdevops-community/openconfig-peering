@@ -73,18 +73,19 @@ pfxname = 'AS' + str(asn) + '-v4'
 oc.routing_policy.defined_sets.prefix_sets.prefix_set.add(pfxname)
 oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].config.name = pfxname
 for pfxlist in bgpq4['temp']:
-    print(f"prefix: {pfxlist['prefix']}")    
+    print(f"prefix: {pfxlist['prefix']}")
     oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix.add(ip_prefix=pfxlist['prefix'], masklength_range='exact')
-    #print(oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'], 'exact')].keys)
-    #print(oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'], 'exact')].keys)
-    #oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[ip_prefix==pfxlist['prefix'], masklength_range=='exact'].config.ip_prefix=pfxlist['prefix']
-    #oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[pfxlist['prefix']].config.masklength_range='exact'
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.ip_prefix = pfxlist['prefix']
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.masklength_range = 'exact'
 
 pfxname = 'AS' + str(asn) + '-v6'
 oc.routing_policy.defined_sets.prefix_sets.prefix_set.add(pfxname)
 oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].config.name = pfxname
 for pfxlist in bgpq6['temp']:
+    print(f"prefix: {pfxlist['prefix']}")
     oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix.add(ip_prefix=pfxlist['prefix'], masklength_range='exact')
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.ip_prefix = pfxlist['prefix']
+    oc.routing_policy.defined_sets.prefix_sets.prefix_set[pfxname].prefixes.prefix[(pfxlist['prefix'] + ' exact')].config.masklength_range = 'exact'
 
 with open("json/prefixlists.json", "w") as f:
     f.write(pybindJSON.dumps(oc.routing_policy, mode="ietf"))
