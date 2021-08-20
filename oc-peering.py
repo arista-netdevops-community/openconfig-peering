@@ -120,6 +120,7 @@ oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BG
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].config.peer_as=asn
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].config.description=name
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].apply_policy.config.import_policy=rmname
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].apply_policy.config.export_policy='RM_Outbound'
 
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor.add(ipaddr6)
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].config.neighbor_address=ipaddr6
@@ -127,7 +128,7 @@ oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BG
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].config.peer_as=asn
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].config.description=name
 oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr6].apply_policy.config.import_policy=rmname
+oc.network_instances.network_instance['default'].protocols.protocol['BGP' + ' BGP'].bgp.neighbors.neighbor[ipaddr4].apply_policy.config.export_policy='RM_Outbound'
 
 with open("json/bgp.json", "w") as f:
     f.write(pybindJSON.dumps(oc.network_instances, mode="ietf"))
-

@@ -1,7 +1,7 @@
 #!/bin/bash
 rm -Rf venv/ bgpq4/ json/
 mkdir json/
-virtualenv -p $(which python3) venv
+virtualenv venv
 source venv/bin/activate
 pip3 install --upgrade pip
 pip3 install pyang pyangbind requests
