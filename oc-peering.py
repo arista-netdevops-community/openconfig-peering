@@ -30,8 +30,8 @@ print(f"ASN: {asn} \nIPv4: {ipaddr4} \nIPv6: {ipaddr6}")
 ## Prefix list from IRR
 #####################
 cwd = os.getcwd()
-fullCmd4 = cwd + "/bgpq4/bgpq4 -4 -A -j -l temp {}".format(irr_as_set)
-fullCmd6 = cwd + "/bgpq4/bgpq4 -6 -A -j -l temp {}".format(irr_as_set)
+fullCmd4 = cwd + "/tools/bgpq4/bgpq4 -4 -A -j -l temp {}".format(irr_as_set)
+fullCmd6 = cwd + "/tools/bgpq4/bgpq4 -6 -A -j -l temp {}".format(irr_as_set)
 output4 = subprocess.check_output(fullCmd4, shell=True)
 bgpq4 = json.loads(output4)
 output6 = subprocess.check_output(fullCmd6, shell=True)
