@@ -47,15 +47,22 @@ ipv6 = "2001:7f8:19:1::250:1"
 ipv6_prefix_length = 64
 
 oc = openconfig_interfaces()
+# choose which interface we want to configure
 oc.interfaces.interface.add(interface)
+# set the interface description
 oc.interfaces.interface[interface].config.description = 'IXP Port'
+# no shutdown
 oc.interfaces.interface[interface].config.enabled = True
 
 oc.interfaces.interface[interface].subinterfaces.subinterface.add(0)
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv4.addresses.address.add(ip=ipv4)
+# set no switchport
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv4.config.enabled = True
+# configure the ip address
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv4.addresses.address[ipv4].config.ip = ipv4
+# configure the subnet mask
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv4.addresses.address[ipv4].config.prefix_length = ipv4_prefix_length
+# set the address type to PRIMARY using the augmented model, only required pre 4.27
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv4.addresses.address[ipv4].config.addr_type = 'PRIMARY'
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv6.addresses.address.add(ip=ipv6)
 oc.interfaces.interface[interface].subinterfaces.subinterface[0].ipv6.config.enabled = True
